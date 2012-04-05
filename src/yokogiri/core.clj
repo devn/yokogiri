@@ -58,7 +58,7 @@
   Usage:
   user> (attr-map #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
   ;=> {:text \"Search\", :href \"http://example.com\", :id \"bar\", :class \"foo\"}"
-  [^Node node]
+  [^DomNode node]
   (let [^NamedNodeMap attrs (.getAttributes node)]
     (loop [acc 0, res {}]
       (if (= acc (count attrs))
