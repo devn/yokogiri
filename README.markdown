@@ -11,7 +11,7 @@ or
 	  (:use [yokogiri.core]))
 
 
-## Usage
+## usage
 
     (def client (yokogiri/make-client))
 	
@@ -24,7 +24,7 @@ or
 	(def footer-feedback-text
 	  (map node-text (css page "div.footer-beta-feedback")))
 
-## License
+## license
 
 Copyright (C) 2012 Devin Walters
 
