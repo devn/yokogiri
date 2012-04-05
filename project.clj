@@ -1,4 +1,4 @@
-(defproject yokogiri "0.0.1"
+(defproject yokogiri "0.0.2"
   :description "Nokogiri for Clojure"
   :url "https://github.com/devn/yokogiri"
   :dependencies [[org.clojure/clojure "1.4.0-master-SNAPSHOT"]
