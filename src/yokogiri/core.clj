@@ -33,7 +33,7 @@
 
   Usage:
   (css (visit *client* \"http://google.com\") \"a.gbzt\")
-  ;=> (#<HtmlAnchor HtmlAnchor[<a onclick\"gbar.logger.il(1,{t:1}); ...)"
+  ;=> (#<HtmlAnchor HtmlAnchor[<a onclick...>]>, ...)"
   [^HtmlPage page, ^String selector]
   (let [queryable-page (DOMNodeSelector. (. page getDocumentElement))]
     (seq (. queryable-page querySelectorAll selector))))
