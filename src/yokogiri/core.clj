@@ -1,39 +1,80 @@
 (ns yokogiri.core
   (:import [com.gargoylesoftware.htmlunit WebClient BrowserVersion]
-           [com.gargoylesoftware.htmlunit.html HtmlPage]
+           [com.gargoylesoftware.htmlunit.html HtmlPage DomNode DomAttr]
+           [org.w3c.dom NamedNodeMap Node]
            [se.fishtank.css.selectors.dom DOMNodeSelector]))
 
-(defn make-client []
+(set! *warn-on-reflection* true)
+
+(defn make-client
+  "Constructs a new WebClient"
+  []
   (new WebClient))
 
-(def ^:dynamic *client* (make-client))
+(defn get-page
+  "GET a url"
+  [^WebClient client, ^String url]
+  (.getPage client url))
 
-(defn visit [^WebClient c, ^String url]
-  (. c getPage url))
+(defn xpath
+  "Return nodes matching a given path"
+  [^HtmlPage page, ^String xpath]
+  (.getByXPath page xpath))
 
-(defn xpath [^HtmlPage page, ^String xpath]
-  (. page getByXPath xpath))
+(defn first-by-xpath
+  "Find the first node matching a given xpath"
+  [^HtmlPage page, ^String xpath]
+  (.getFirstByXPath page xpath))
 
 ;; http://www.goodercode.com/wp/use-css-selectors-with-htmlunit/
 ;; http://stackoverflow.com/questions/9275467/converting-java-collections-to-clojure-data-structures
-(defn css [^HtmlPage page, ^String selector]
+(defn css
+  "Returns matches for a given CSS selector
+
+  Usage:
+  (css (visit *client* \"http://google.com\") \"a.gbzt\")
+  ;=> (#<HtmlAnchor HtmlAnchor[<a onclick\"gbar.logger.il(1,{t:1}); ...)"
+  [^HtmlPage page, ^String selector]
   (let [queryable-page (DOMNodeSelector. (. page getDocumentElement))]
     (seq (. queryable-page querySelectorAll selector))))
 
-(defn node-xml [node]
+(defn node-xml
+  "Returns a node's xml representation"
+  [^DomNode node]
   (.asXml node))
 
-(defn node-text [node]
+(defn node-text
+  "Returns a node's text value
+
+  Usage:
+  user> (node-text #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
+  ;=> \"Search\""
+  [^DomNode node]
   (.asText node))
 
-(defn attrs [node]
-  (let [attrs (.getAttributes node)]
+(defn attr-map
+  "Returns a clojure map of attributes for a given node
+
+  Usage:
+  user> (attr-map #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
+  ;=> {:text \"Search\", :href \"http://example.com\", :id \"bar\", :class \"foo\"}"
+  [^Node node]
+  (let [^NamedNodeMap attrs (.getAttributes node)]
     (loop [acc 0, res {}]
       (if (= acc (count attrs))
         (assoc res :text (node-text node))
         (recur (inc acc)
-               (let [attr (.item attrs acc)]
+               (let [^DomAttr attr (.item attrs acc)]
                  (assoc res (keyword (.getName attr)) (.getValue attr))))))))
+
+(defn- dom-attr
+  "Returns the HtmlUnit DomAttr objects for a given node
+
+  See: yokogiri.core/attr-map"
+  [^DomNode node]
+  (let [^NamedNodeMap attrs (.getAttributes node)
+        len (.getLength attrs)]
+    (map #(.item attrs %) (range 0 len))))
 
 
 ;;******************************************************************************

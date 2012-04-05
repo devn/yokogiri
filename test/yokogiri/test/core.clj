@@ -1,6 +1,6 @@
 (ns yokogiri.test.core
   (:use [yokogiri.core])
-  (:use [clojure.sweet]))
+  (:use [midje.sweet]))
 
 (facts "about clients")
 (facts "about scraping")
