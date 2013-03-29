@@ -1,18 +1,18 @@
 # yokogiri
 
 In your `project.clj`: `[yokogiri "1.5.1"]`
-
+```clojure
     (ns myproject.core
 	  (:require [yokogiri.core :as yokogiri]))
-
+```
 or
-
+```clojure
 	(ns myproject.core
 	  (:use [yokogiri.core]))
-
+```
 
 ## usage
-
+```clojure
     (def client (yokogiri/make-client))
 	
 	(def page (yokogiri/get-page client "http://example.com"))
@@ -23,7 +23,7 @@ or
 	;; css
 	(def footer-feedback-text
 	  (map node-text (css page "div.footer-beta-feedback")))
-
+```
 ## license
 
 Copyright (C) 2012 Devin Walters
