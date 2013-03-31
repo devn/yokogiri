@@ -23,6 +23,10 @@ or
 	;; css
 	(def footer-feedback-text
 	  (map node-text (css page "div.footer-beta-feedback")))
+	  
+	;; get specific attributes
+	(def a-attr-href
+           (map #(select-keys % [:href]) (map attr-map (css page "div.link a"))))  
 ```
 ## license
 
