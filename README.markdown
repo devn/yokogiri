@@ -1,6 +1,6 @@
 # yokogiri
 
-In your `project.clj`: `[yokogiri "1.5.1"]`
+In your `project.clj`: `[yokogiri "1.5.2"]`
 ```clojure
     (ns myproject.core
 	  (:require [yokogiri.core :as yokogiri]))
