@@ -2,5 +2,5 @@
   (:use [yokogiri.core])
   (:use [midje.sweet]))
 
-(facts "about clients")
-(facts "about scraping")
+(facts "about clients"
+  (make-client) => truthy)

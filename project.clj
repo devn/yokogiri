@@ -8,5 +8,6 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [net.sourceforge.htmlunit/htmlunit "2.9"]
                  [se.fishtank/css-selectors "1.0.4"]]
-  :profiles {:dev {:dependencies [[midje "1.3.1"]]}}
+  :profiles {:dev {:dependencies [[midje "1.5.1" :exclusions [org.clojure/clojure]]]
+                   :plugins [[lein-midje "3.0.1"]]}}
   :min-lein-version "2.0.0")

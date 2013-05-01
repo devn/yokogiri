@@ -1,5 +1,11 @@
 # yokogiri
 
+## status
+
+[![Build Status](https://travis-ci.org/devn/yokogiri.png)](https://travis-ci.org/devn/yokogiri)
+
+## getting started
+
 In your `project.clj`: `[yokogiri "1.5.2"]`
 ```clojure
     (ns myproject.core
