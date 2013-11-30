@@ -1,0 +1,9 @@
+* <2013-11-30 Sat> -- Version 1.5.4
+** Bumped version to 1.5.4
+** Updated HTMLUnit dependency to 2.12
+** Added the ability to get and set options on a client
+- See:
+  http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/WebClientOptions.html
+- And:
+  https://github.com/devn/yokogiri/blob/master/src/yokogiri/core.clj#L9
+
