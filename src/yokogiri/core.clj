@@ -1,15 +1,71 @@
 (ns yokogiri.core
-  (:import [com.gargoylesoftware.htmlunit WebClient BrowserVersion]
+  (:import [com.gargoylesoftware.htmlunit WebClient BrowserVersion WebClientOptions]
            [com.gargoylesoftware.htmlunit.html HtmlPage DomNode DomAttr]
            [org.w3c.dom NamedNodeMap Node]
            [se.fishtank.css.selectors.dom DOMNodeSelector]))
 
 (set! *warn-on-reflection* true)
 
+(defn get-client-options
+  "Returns the client options object for a WebClient."
+  [^WebClient client]
+  (.getOptions client))
+
+(def set-client-options-map
+  '{:activex-native                  #(.setActiveXNative %1 %2)
+    :applet                          #(.setAppletEnabled %1 %2)
+    :block-popups                    #(.setPopupBlockerEnabled %1 %2)
+    :css                             #(.setCssEnabled %1 %2)
+    :geolocation                     #(.setGeolocationEnabled %1 %2)
+    :homepage                        #(.setHomePage %1 %2)
+    :insecure-ssl                    #(.setUseInsecureSSL %1 %2)
+    :print-content-on-failing-status #(.setPrintContentOnFailingStatusCode %1 %2)
+    :redirects                       #(.setRedirectEnabled %1 %2)
+    :throw-on-failing-status         #(.setThrowExceptionOnFailingStatusCode %1 %2)
+    :throw-on-script-error           #(.setThrowExceptionOnScriptError %1 %2)
+    :timeout                         #(.setTimeout %1 %2)
+    :tracking                        #(.setDoNotTrackEnabled %1 %2)
+    :javascript                      #(.setJavaScriptEnabled %1 %2)})
+
+(defn set-client-options!
+  "Sets options on the client. See
+  yokogiri.core/set-client-options-map for available options."
+  [^WebClient client opts]
+  (let [^WebClientOptions client-opts (get-client-options client)]
+    (doseq [[k v] opts]
+      (let [setter-fn (get set-client-options-map k)]
+        (setter-fn client-opts v)))
+    client))
+
+(defn get-client-options-map
+  "Returns a map of all options currently set on the client."
+  [^WebClient client]
+  (let [^WebClientOptions opts (get-client-options ^WebClient client)]
+    {:activex-native                       (. opts isActiveXNative)
+     :applet                               (. opts isAppletEnabled)
+     :block-popups                         (. opts isPopupBlockerEnabled)
+     :css                                  (. opts isCssEnabled)
+     :gelocation                           (. opts isGeolocationEnabled)
+     :homepage                             (. opts getHomePage)
+     :insecure-ssl                         (. opts isUseInsecureSSL)
+     :javascript                           (. opts isJavaScriptEnabled)
+     :print-content-on-failing-status-code (. opts getPrintContentOnFailingStatusCode)
+     :redirects                            (. opts isRedirectEnabled)
+     :throw-on-failing-status              (. opts isThrowExceptionOnFailingStatusCode)
+     :throw-on-script-error                (. opts isThrowExceptionOnScriptError)
+     :timeout                              (. opts getTimeout)
+     :tracking                             (. opts isDoNotTrackEnabled)}))
+
 (defn make-client
-  "Constructs a new WebClient"
-  []
-  (new WebClient))
+  "Constructs a new WebClient.
+
+  Basic Example: (make-client)
+  With Options: (make-client :javascript true :redirects true)"
+  [& {:as opts}]
+  (let [client (new WebClient)]
+    (if-not (empty? opts)
+      (set-client-options! (new WebClient) opts)
+      client)))
 
 (defn get-page
   "GET a url"
