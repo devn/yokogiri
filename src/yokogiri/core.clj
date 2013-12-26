@@ -6,10 +6,9 @@
 
 (set! *warn-on-reflection* true)
 
-(defn get-client-options
+(defn- web-client-options
   "Returns the client options object for a WebClient."
-  [^WebClient client]
-  (.getOptions client))
+  [^WebClient client] (.getOptions client))
 
 (def set-client-options-map
   '{:activex-native                  #(.setActiveXNative %1 %2)
@@ -31,16 +30,21 @@
   "Sets options on the client. See
   yokogiri.core/set-client-options-map for available options."
   [^WebClient client opts]
-  (let [^WebClientOptions client-opts (get-client-options client)]
+  (let [^WebClientOptions client-opts (web-client-options client)]
     (doseq [[k v] opts]
       (let [setter-fn (get set-client-options-map k)]
         (setter-fn client-opts v)))
     client))
 
-(defn get-client-options-map
-  "Returns a map of all options currently set on the client."
+(defn get-client-options
+  "Returns a map of all options currently set on a client.
+
+  Usage:
+  user> (let [client (make-client :redirects false)]
+          (get-client-options client))
+  ;=> {:javascript true, :redirects false, ...}"
   [^WebClient client]
-  (let [^WebClientOptions opts (get-client-options ^WebClient client)]
+  (let [^WebClientOptions opts (web-client-options ^WebClient client)]
     {:activex-native                       (. opts isActiveXNative)
      :applet                               (. opts isAppletEnabled)
      :block-popups                         (. opts isPopupBlockerEnabled)
