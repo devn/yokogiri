@@ -1,9 +1,15 @@
+* <2013-12-25 Wed> -- Version 1.5.5
+** Fixed a bug with make-client options not being set
+** Added more usage to docstrings
+** Improved consistency and breadth of docstrings in general
+** Renamed get-client-options to web-client-options and privatized it
+** In turn, renamed get-client-options-map to get-client-options
+** Documented the set of possible options that can be set on a client
+** Added a few tests around make-client
+** yokogiri.core/xpath now returns a vector instead of an ArrayList
 * <2013-11-30 Sat> -- Version 1.5.4
 ** Bumped version to 1.5.4
 ** Updated HTMLUnit dependency to 2.12
 ** Added the ability to get and set options on a client
-- See:
-  http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/WebClientOptions.html
-- And:
-  https://github.com/devn/yokogiri/blob/master/src/yokogiri/core.clj#L9
-
+   - See: http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/WebClientOptions.html
+   - And: https://github.com/devn/yokogiri/blob/master/src/yokogiri/core.clj#L9

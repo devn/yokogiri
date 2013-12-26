@@ -150,7 +150,7 @@
   "Returns matches for a given CSS selector
 
   Usage:
-  user> (css (visit *client* \"http://google.com\") \"a.gbzt\")
+  user> (css your-client \"a.gbzt\")
   ;=> (#<HtmlAnchor HtmlAnchor[<a onclick...>]>, ...)"
   [^HtmlPage page, ^String selector]
   (let [queryable-page (DOMNodeSelector. (. page getDocumentElement))]
@@ -191,6 +191,7 @@
         (recur (inc acc)
                (let [^DomAttr attr (.item attrs acc)]
                  (assoc res (keyword (.getName attr)) (.getValue attr))))))))
+(def attrs #'yokogiri.core/attr-map)
 
 ;; TODO: http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/DomAttr.html
 (defn- dom-attr
