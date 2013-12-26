@@ -11,24 +11,42 @@
   [^WebClient client] (.getOptions client))
 
 (def set-client-options-map
-  '{:activex-native                  #(.setActiveXNative %1 %2)
-    :applet                          #(.setAppletEnabled %1 %2)
-    :block-popups                    #(.setPopupBlockerEnabled %1 %2)
-    :css                             #(.setCssEnabled %1 %2)
-    :geolocation                     #(.setGeolocationEnabled %1 %2)
-    :homepage                        #(.setHomePage %1 %2)
-    :insecure-ssl                    #(.setUseInsecureSSL %1 %2)
-    :print-content-on-failing-status #(.setPrintContentOnFailingStatusCode %1 %2)
-    :redirects                       #(.setRedirectEnabled %1 %2)
-    :throw-on-failing-status         #(.setThrowExceptionOnFailingStatusCode %1 %2)
-    :throw-on-script-error           #(.setThrowExceptionOnScriptError %1 %2)
-    :timeout                         #(.setTimeout %1 %2)
-    :tracking                        #(.setDoNotTrackEnabled %1 %2)
-    :javascript                      #(.setJavaScriptEnabled %1 %2)})
+  {:activex-native                  #(.setActiveXNative                     ^WebClientOptions %1 %2)
+   :applet                          #(.setAppletEnabled                     ^WebClientOptions %1 %2)
+   :block-popups                    #(.setPopupBlockerEnabled               ^WebClientOptions %1 %2)
+   :css                             #(.setCssEnabled                        ^WebClientOptions %1 %2)
+   :geolocation                     #(.setGeolocationEnabled                ^WebClientOptions %1 %2)
+   :homepage                        #(.setHomePage                          ^WebClientOptions %1 %2)
+   :insecure-ssl                    #(.setUseInsecureSSL                    ^WebClientOptions %1 %2)
+   :print-content-on-failing-status #(.setPrintContentOnFailingStatusCode   ^WebClientOptions %1 %2)
+   :redirects                       #(.setRedirectEnabled                   ^WebClientOptions %1 %2)
+   :throw-on-failing-status         #(.setThrowExceptionOnFailingStatusCode ^WebClientOptions %1 %2)
+   :throw-on-script-error           #(.setThrowExceptionOnScriptError       ^WebClientOptions %1 %2)
+   :timeout                         #(.setTimeout                           ^WebClientOptions %1 %2)
+   :tracking                        #(.setDoNotTrackEnabled                 ^WebClientOptions %1 %2)
+   :javascript                      #(.setJavaScriptEnabled                 ^WebClientOptions %1 %2)})
 
 (defn set-client-options!
-  "Sets options on the client. See
-  yokogiri.core/set-client-options-map for available options."
+  "Sets options on the client.
+
+  Usage: (let [client (make-client)]
+           (set-client-options! client {:redirects false}))
+  ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@7622ccf2>
+
+  Available Options:
+  :activex-native                   bool
+  :applet                           bool
+  :css                              bool
+  :geolocation                      bool
+  :insecure-ssl                     bool
+  :print-content-on-failing-status  bool
+  :redirects                        bool
+  :throw-on-failing-status          bool
+  :throw-on-script-error            bool
+  :tracking                         bool
+  :javascript                       bool
+  :homepage                         string
+  :timeout                          integer"
   [^WebClient client opts]
   (let [^WebClientOptions client-opts (web-client-options client)]
     (doseq [[k v] opts]
@@ -63,8 +81,31 @@
 (defn make-client
   "Constructs a new WebClient.
 
-  Basic Example: (make-client)
-  With Options: (make-client :javascript true :redirects true)"
+  Usage:
+  user> (make-client)
+  ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@124d43a8>
+
+  With Options:
+  user> (make-client :geolocation true
+                     :block-popups false)
+  ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@4473f04f>
+
+  Available Options:
+  :activex-native                   bool
+  :applet                           bool
+  :css                              bool
+  :geolocation                      bool
+  :insecure-ssl                     bool
+  :print-content-on-failing-status  bool
+  :redirects                        bool
+  :throw-on-failing-status          bool
+  :throw-on-script-error            bool
+  :tracking                         bool
+  :javascript                       bool
+  :homepage                         string
+  :timeout                          integer
+
+  See also: yokogiri.core/set-client-options!"
   [& {:as opts}]
   (let [client (new WebClient)]
     (if-not (empty? opts)
@@ -72,17 +113,34 @@
       client)))
 
 (defn get-page
-  "GET a url"
+  "Takes a client and a url, returns an HtmlPage.
+
+  Usage:
+  user> (get-page (make-client) \"http://www.example.com/\")
+  ;=> #<HtmlPage HtmlPage(http://www.example.com/)@478170219>"
   [^WebClient client, ^String url]
-  (.getPage client url))
+  (.getPage ^WebClient client url))
 
 (defn xpath
-  "Return nodes matching a given path"
+  "Takes an HtmlPage and an xpath string. Returns a vector of nodes
+  which match the provided xpath string.
+
+  Usage:
+  user> (let [page (get-page your-client \"http://www.example.com\")]
+          (xpath page \"//a\"))
+  ;=> [#<HtmlAnchor HtmlAnchor[<a href=\"http://www.iana.org/domains/example\">]>]"
   [^HtmlPage page, ^String xpath]
-  (.getByXPath page xpath))
+  (into [] (.getByXPath page xpath)))
 
 (defn first-by-xpath
-  "Find the first node matching a given xpath"
+  "Takes an HtmlPage and an xpath string. Returns the first matching
+  node which matches the provided xpath string.
+
+  Usage:
+  user> (first-by-xpath
+          (get-page your-client \"http://www.example.com/\")
+          \"//a\")
+  ;=> #<HtmlAnchor HtmlAnchor[<a href=\"http://www.iana.org/domains/example\">]>"
   [^HtmlPage page, ^String xpath]
   (.getFirstByXPath page xpath))
 
@@ -92,14 +150,21 @@
   "Returns matches for a given CSS selector
 
   Usage:
-  (css (visit *client* \"http://google.com\") \"a.gbzt\")
+  user> (css (visit *client* \"http://google.com\") \"a.gbzt\")
   ;=> (#<HtmlAnchor HtmlAnchor[<a onclick...>]>, ...)"
   [^HtmlPage page, ^String selector]
   (let [queryable-page (DOMNodeSelector. (. page getDocumentElement))]
     (seq (. queryable-page querySelectorAll selector))))
 
 (defn node-xml
-  "Returns a node's xml representation"
+  "Returns a node's XML representation.
+
+  Usage:
+  user> (node-xml
+          (first-by-xpath
+            (get-page (make-client) \"http://www.example.com/\")
+           \"//a\"))
+  ;=> <a href=\"http://www.iana.org/domains/example\">\n  More information...\n</a>\n"
   [^DomNode node]
   (.asXml node))
 
@@ -121,12 +186,13 @@
   [^DomNode node]
   (let [^NamedNodeMap attrs (.getAttributes node)]
     (loop [acc 0, res {}]
-      (if (= acc (count attrs))
+      (if (= acc (.getLength attrs))
         (assoc res :text (node-text node))
         (recur (inc acc)
                (let [^DomAttr attr (.item attrs acc)]
                  (assoc res (keyword (.getName attr)) (.getValue attr))))))))
 
+;; TODO: http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/DomAttr.html
 (defn- dom-attr
   "Returns the HtmlUnit DomAttr objects for a given node
 
