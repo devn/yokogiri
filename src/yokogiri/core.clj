@@ -191,6 +191,7 @@
         (recur (inc acc)
                (let [^DomAttr attr (.item attrs acc)]
                  (assoc res (keyword (.getName attr)) (.getValue attr))))))))
+
 (def attrs #'yokogiri.core/attr-map)
 
 ;; TODO: http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/DomAttr.html
@@ -202,3 +203,10 @@
   (let [^NamedNodeMap attrs (.getAttributes node)
         len (.getLength attrs)]
     (map #(.item attrs %) (range 0 len))))
+
+(comment
+  (def c (make-client))
+  (def p (get-page c "http://www.example.com/"))
+  (xpath p "//a")
+  (map attrs (css p "p"))
+)
