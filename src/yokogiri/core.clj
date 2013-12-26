@@ -145,7 +145,8 @@
   (.getFirstByXPath page xpath))
 
 ;; http://www.goodercode.com/wp/use-css-selectors-with-htmlunit/
-;; http://stackoverflow.com/questions/9275467/converting-java-collections-to-clojure-data-structures
+;; TODO: Bumping the version of css-selectors to 1.0.4 breaks
+;; querying by CSS.
 (defn css
   "Returns matches for a given CSS selector
 
