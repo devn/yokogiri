@@ -6,7 +6,7 @@
 
 ## getting started
 
-In your `project.clj`: `[yokogiri "1.5.5"]`
+In your `project.clj`: `[yokogiri "1.5.6"]`
 ```clojure
   (ns myproject.core
     (:require [yokogiri.core :as yokogiri]))
@@ -23,7 +23,7 @@ or
 
   ;; with javascript enabled (look at the docstring for make-client
   ;; for all of the available options.):
-  (def client (make-client :javascript true))
+  (def client (make-client :javascript false))
 
   ;; Curious what options are set by default?
   (get-client-options (make-client))
@@ -46,10 +46,10 @@ or
   (def footer-feedback-text
     (map node-text (css page "div.footer-beta-feedback")))
 
-  ;; get specific attributes
+  ;; Get specific attributes
   (def a-attr-href
-    (map #(select-keys (attr-map %) [:href])
-      (-> page css "div.link a")))
+    (map #(select-keys (attrs %) [:href])
+      (-> page (css "div.link a"))))
 ```
 
 ## license
