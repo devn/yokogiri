@@ -1,1 +1,5 @@
 * TODO Allow library consumer to set the BrowserVersion
+* TODO What does parity between Yokogiri and Nokogiri look like?
+  I doubt the answer is 1:1. Nokogiri does more than I think Yokogiri
+  ought to. Writing vs Reading, Traversal vs Modification,
+  Abstraction vs Specificity.
