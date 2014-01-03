@@ -52,6 +52,10 @@ or
       (-> page (css "div.link a"))))
 ```
 
+## documentation
+
+Check out the [nicely formatted documentation](https://rawgithub.com/devn/yokogiri/master/docs/uberdoc.html).
+
 ## license
 
 Copyright (C) 2013 Devin Walters
