@@ -9,5 +9,6 @@
                  [net.sourceforge.htmlunit/htmlunit "2.13"]
                  [se.fishtank/css-selectors "1.0.2"]]
   :profiles {:dev {:dependencies [[midje "1.5.1" :exclusions [org.clojure/clojure]]]
-                   :plugins [[lein-midje "3.0.1"]]}}
+                   :plugins [[lein-midje "3.0.1"]
+                             [lein-marginalia "0.7.1"]]}}
   :min-lein-version "2.0.0")

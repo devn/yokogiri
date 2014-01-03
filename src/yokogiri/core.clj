@@ -29,24 +29,27 @@
 (defn set-client-options!
   "Sets options on the client.
 
-  Usage: (let [client (make-client)]
-           (set-client-options! client {:redirects false}))
-  ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@7622ccf2>
+  **Usage:**
 
-  Available Options:
-  :activex-native                   bool
-  :applet                           bool
-  :css                              bool
-  :geolocation                      bool
-  :insecure-ssl                     bool
-  :print-content-on-failing-status  bool
-  :redirects                        bool
-  :throw-on-failing-status          bool
-  :throw-on-script-error            bool
-  :tracking                         bool
-  :javascript                       bool
-  :homepage                         string
-  :timeout                          integer"
+    (let [client (make-client)]
+      (set-client-options! client {:redirects false}))
+    ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@7622ccf2>
+
+  **Available Options:**
+
+    :activex-native                   bool
+    :applet                           bool
+    :css                              bool
+    :geolocation                      bool
+    :insecure-ssl                     bool
+    :print-content-on-failing-status  bool
+    :redirects                        bool
+    :throw-on-failing-status          bool
+    :throw-on-script-error            bool
+    :tracking                         bool
+    :javascript                       bool
+    :homepage                         string
+    :timeout                          integer"
   [^WebClient client opts]
   (let [^WebClientOptions client-opts (web-client-options client)]
     (doseq [[k v] opts]
@@ -57,10 +60,11 @@
 (defn get-client-options
   "Returns a map of all options currently set on a client.
 
-  Usage:
-  user> (let [client (make-client :redirects false)]
-          (get-client-options client))
-  ;=> {:javascript true, :redirects false, ...}"
+  **Usage:**
+
+    user> (let [client (make-client :redirects false)]
+            (get-client-options client))
+    ;=> {:javascript true, :redirects false, ...}"
   [^WebClient client]
   (let [^WebClientOptions opts (web-client-options ^WebClient client)]
     {:activex-native                       (. opts isActiveXNative)
@@ -81,31 +85,34 @@
 (defn make-client
   "Constructs a new WebClient.
 
-  Usage:
-  user> (make-client)
-  ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@124d43a8>
+  **Usage:**
 
-  With Options:
-  user> (make-client :geolocation true
-                     :block-popups false)
-  ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@4473f04f>
+    user> (make-client)
+    ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@124d43a8>
 
-  Available Options:
-  :activex-native                   bool
-  :applet                           bool
-  :css                              bool
-  :geolocation                      bool
-  :insecure-ssl                     bool
-  :print-content-on-failing-status  bool
-  :redirects                        bool
-  :throw-on-failing-status          bool
-  :throw-on-script-error            bool
-  :tracking                         bool
-  :javascript                       bool
-  :homepage                         string
-  :timeout                          integer
+  **With Options:**
 
-  See also: yokogiri.core/set-client-options!"
+    user> (make-client :geolocation true
+                       :block-popups false)
+    ;=> #<WebClient com.gargoylesoftware.htmlunit.WebClient@4473f04f>
+
+  **Available Options:**
+
+    :activex-native                   bool
+    :applet                           bool
+    :css                              bool
+    :geolocation                      bool
+    :insecure-ssl                     bool
+    :print-content-on-failing-status  bool
+    :redirects                        bool
+    :throw-on-failing-status          bool
+    :throw-on-script-error            bool
+    :tracking                         bool
+    :javascript                       bool
+    :homepage                         string
+    :timeout                          integer
+
+  _See also: yokogiri.core/set-client-options!_"
   [& {:as opts}]
   (let [client (new WebClient)]
     (if-not (empty? opts)
@@ -115,9 +122,10 @@
 (defn get-page
   "Takes a client and a url, returns an HtmlPage.
 
-  Usage:
-  user> (get-page (make-client) \"http://www.example.com/\")
-  ;=> #<HtmlPage HtmlPage(http://www.example.com/)@478170219>"
+  **Usage:**
+
+    user> (get-page (make-client) \"http://www.example.com/\")
+    ;=> #<HtmlPage HtmlPage(http://www.example.com/)@478170219>"
   [^WebClient client, ^String url]
   (.getPage ^WebClient client url))
 
@@ -125,10 +133,11 @@
   "Takes an HtmlPage and an xpath string. Returns a vector of nodes
   which match the provided xpath string.
 
-  Usage:
-  user> (let [page (get-page your-client \"http://www.example.com\")]
-          (xpath page \"//a\"))
-  ;=> [#<HtmlAnchor HtmlAnchor[<a href=\"http://www.iana.org/domains/example\">]>]"
+  **Usage:**
+
+    user> (let [page (get-page your-client \"http://www.example.com\")]
+            (xpath page \"//a\"))
+    ;=> [#<HtmlAnchor HtmlAnchor[<a href=\"http://www.iana.org/domains/example\">]>]"
   [^HtmlPage page, ^String xpath]
   (into [] (.getByXPath page xpath)))
 
@@ -136,23 +145,25 @@
   "Takes an HtmlPage and an xpath string. Returns the first matching
   node which matches the provided xpath string.
 
-  Usage:
-  user> (first-by-xpath
-          (get-page your-client \"http://www.example.com/\")
-          \"//a\")
-  ;=> #<HtmlAnchor HtmlAnchor[<a href=\"http://www.iana.org/domains/example\">]>"
+  **Usage:**
+
+    user> (first-by-xpath
+            (get-page your-client \"http://www.example.com/\")
+            \"//a\")
+    ;=> #<HtmlAnchor HtmlAnchor[<a href=\"http://www.iana.org/domains/example\">]>"
   [^HtmlPage page, ^String xpath]
   (.getFirstByXPath page xpath))
 
-;; http://www.goodercode.com/wp/use-css-selectors-with-htmlunit/
-;; TODO: Bumping the version of css-selectors to 1.0.4 breaks
-;; querying by CSS.
+;; _http://www.goodercode.com/wp/use-css-selectors-with-htmlunit/_
+;; _TODO: Bumping the version of css-selectors to 1.0.4 breaks_
+;; _querying by CSS._
 (defn css
   "Returns matches for a given CSS selector
 
-  Usage:
-  user> (css your-client \"a.gbzt\")
-  ;=> (#<HtmlAnchor HtmlAnchor[<a onclick...>]>, ...)"
+  **Usage:**
+
+    user> (css your-client \"a.gbzt\")
+    ;=> (#<HtmlAnchor HtmlAnchor[<a onclick...>]>, ...)"
   [^HtmlPage page, ^String selector]
   (let [queryable-page (DOMNodeSelector. (. page getDocumentElement))]
     (seq (. queryable-page querySelectorAll selector))))
@@ -160,30 +171,35 @@
 (defn node-xml
   "Returns a node's XML representation.
 
-  Usage:
-  user> (node-xml
-          (first-by-xpath
-            (get-page (make-client) \"http://www.example.com/\")
-           \"//a\"))
-  ;=> <a href=\"http://www.iana.org/domains/example\">\n  More information...\n</a>\n"
+  **Usage:**
+
+    user> (node-xml
+            (first-by-xpath
+              (get-page (make-client) \"http://www.example.com/\")
+             \"//a\"))
+    ;=> <a href=\"http://www.iana.org/domains/example\">\n  More information...\n</a>\n"
   [^DomNode node]
   (.asXml node))
 
 (defn node-text
   "Returns a node's text value
 
-  Usage:
-  user> (node-text #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
-  ;=> \"Search\""
+  **Usage:**
+
+    user> (node-text #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
+    ;=> \"Search\""
   [^DomNode node]
   (.asText node))
 
 (defn attr-map
   "Returns a clojure map of attributes for a given node
 
-  Usage:
-  user> (attr-map #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
-  ;=> {:text \"Search\", :href \"http://example.com\", :id \"bar\", :class \"foo\"}"
+  **Usage:**
+
+    user> (attr-map #<HtmlAnchor HtmlAnchor[<a class=\"foo\" id=\"bar\" href=\"http://example.com\">]>)
+    ;=> {:text \"Search\", :href \"http://example.com\", :id \"bar\", :class \"foo\"}
+
+  _See also: yokogiri.core/attrs_"
   [^DomNode node]
   (let [^NamedNodeMap attrs (.getAttributes node)]
     (loop [acc 0, res {}]
@@ -193,13 +209,13 @@
                (let [^DomAttr attr (.item attrs acc)]
                  (assoc res (keyword (.getName attr)) (.getValue attr))))))))
 
-(def attrs #'yokogiri.core/attr-map)
+(def ^{:doc "_See also: yokogiri.core/attr-map_"} attrs #'yokogiri.core/attr-map)
 
-;; TODO: http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/DomAttr.html
+;; _TODO: http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/DomAttr.html_
 (defn- dom-attr
   "Returns the HtmlUnit DomAttr objects for a given node
 
-  See: yokogiri.core/attr-map"
+  _See also: yokogiri.core/attr-map_"
   [^DomNode node]
   (let [^NamedNodeMap attrs (.getAttributes node)
         len (.getLength attrs)]
