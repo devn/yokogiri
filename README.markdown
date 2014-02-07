@@ -30,7 +30,7 @@ or
   ;=> {:redirects true, :javascript true, ...}
 
   ;; XPATH
-  ;; First, we get the *page*.
+  ;; First, we get the page.
   (def page (get-page client "http://example.com"))
 
   (xpath page "//a")
@@ -50,6 +50,16 @@ or
   (def a-attr-href
     (map #(select-keys (attrs %) [:href])
       (-> page (css "div.link a"))))
+
+  ;; Not necessary to pass around client:
+  (get-page "http://example.com/")
+
+  ;; Rebind *client*
+  (with-client (make-client :javascript false)
+    (get-page "http://www.example.com/"))
+
+  ;; Treat a local HTML file as a page:
+  (xpath (as-page "docs/uberdoc.html") "//a")
 ```
 
 ## documentation
