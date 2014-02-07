@@ -3031,6 +3031,7 @@ net.brehaut.ClojureTools = (function (SH) {
 </script><title>yokogiri -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">yokogiri</h1><h2 class="project-version">1.5.6</h2><br /><p>Barebones Nokogiri for Clojure</p>
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.5.1</td></tr><tr><td class="dep-name">net.sourceforge.htmlunit/htmlunit</td><td class="dotted"><hr /></td><td class="dep-version">2.13</td></tr><tr><td class="dep-name">se.fishtank/css-selectors</td><td class="dotted"><hr /></td><td class="dep-version">1.0.2</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#yokogiri.core">yokogiri.core</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#yokogiri.core" name="yokogiri.core"><h1 class="project-name">yokogiri.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns yokogiri.core
+  (:require [clojure.java.io :as io])
   (:import [com.gargoylesoftware.htmlunit WebClient BrowserVersion WebClientOptions]
            [com.gargoylesoftware.htmlunit.html HtmlPage DomNode DomAttr]
            [org.w3c.dom NamedNodeMap Node]
@@ -3052,7 +3053,8 @@ net.brehaut.ClojureTools = (function (SH) {
    :throw-on-script-error           #(.setThrowExceptionOnScriptError       ^WebClientOptions %1 %2)
    :timeout                         #(.setTimeout                           ^WebClientOptions %1 %2)
    :tracking                        #(.setDoNotTrackEnabled                 ^WebClientOptions %1 %2)
-   :javascript                      #(.setJavaScriptEnabled                 ^WebClientOptions %1 %2)})</pre></td></tr><tr><td class="docs"><p>Sets options on the client.</p>
+   :javascript                      #(.setJavaScriptEnabled                 ^WebClientOptions %1 %2)})</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(declare ^:dynamic *client*)</pre></td></tr><tr><td class="docs"><p>Sets options on the client.</p>
 
 <p>  <strong>Usage:</strong></p>
 
@@ -3078,12 +3080,13 @@ net.brehaut.ClojureTools = (function (SH) {
 :timeout                          integer
 </code></pre>
 </td><td class="codes"><pre class="brush: clojure">(defn set-client-options!
-  [^WebClient client opts]
-  (let [^WebClientOptions client-opts (web-client-options client)]
-    (doseq [[k v] opts]
-      (let [setter-fn (get set-client-options-map k)]
-        (setter-fn client-opts v)))
-    client))</pre></td></tr><tr><td class="docs"><p>Returns a map of all options currently set on a client.</p>
+  ([opts] (set-client-options! *client* opts))
+  ([^WebClient client opts]
+     (let [^WebClientOptions client-opts (web-client-options client)]
+       (doseq [[k v] opts]
+         (let [setter-fn (get set-client-options-map k)]
+           (setter-fn client-opts v)))
+       client)))</pre></td></tr><tr><td class="docs"><p>Returns a map of all options currently set on a client.</p>
 
 <p>  <strong>Usage:</strong></p>
 
@@ -3145,7 +3148,20 @@ net.brehaut.ClojureTools = (function (SH) {
   (let [client (new WebClient)]
     (if-not (empty? opts)
       (set-client-options! (new WebClient) opts)
-      client)))</pre></td></tr><tr><td class="docs"><p>Takes a client and a url, returns an HtmlPage.</p>
+      client)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defonce ^:dynamic *client* (make-client))</pre></td></tr><tr><td class="docs"><p>Takes a client which will be bound to <em>client</em>
+  within the scope of the form.</p>
+
+<p>  <strong>Usage:</strong></p>
+
+<pre><code>user&gt; (with-client (make-client :javascript false)
+        (get-page "http://www.example.com/"))
+;=&gt; #&lt;HtmlPage HtmlPage(http://www.example.com/)@1536532984&gt;
+</code></pre>
+</td><td class="codes"><pre class="brush: clojure">(defmacro with-client
+  [c &amp; body]
+  `(binding [*client* ~c]
+     ~@body))</pre></td></tr><tr><td class="docs"><p>Takes a client and a url, returns an HtmlPage.</p>
 
 <p>  <strong>Usage:</strong></p>
 
@@ -3153,8 +3169,19 @@ net.brehaut.ClojureTools = (function (SH) {
 ;=&gt; #&lt;HtmlPage HtmlPage(http://www.example.com/)@478170219&gt;
 </code></pre>
 </td><td class="codes"><pre class="brush: clojure">(defn get-page
-  [^WebClient client, ^String url]
-  (.getPage ^WebClient client url))</pre></td></tr><tr><td class="docs"><p>Takes an HtmlPage and an xpath string. Returns a vector of nodes
+  ([url] (get-page *client* url))
+  ([^WebClient client, ^String url]
+     (.getPage ^WebClient client url)))</pre></td></tr><tr><td class="docs"><p>Takes a path as a string and creates a Page you can access with
+  #'yokogiri.core/xpath, #'yokogiri.core/css, etc.</p>
+
+<p>  <strong>Usage:</strong></p>
+
+<pre><code>user&gt; (as-page "http://www.example.com/")
+;=&gt; #&lt;HtmlPage HtmlPage(file:/home/user/yokogiri/docs/uberdoc.html)@171016649&gt;
+</code></pre>
+</td><td class="codes"><pre class="brush: clojure">(defn as-page
+  ([path] (as-page *client* path))
+  ([client path] (-&gt;&gt; path io/file io/as-url str (get-page client))))</pre></td></tr><tr><td class="docs"><p>Takes an HtmlPage and an xpath string. Returns a vector of nodes
   which match the provided xpath string.</p>
 
 <p>  <strong>Usage:</strong></p>
