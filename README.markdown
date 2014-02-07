@@ -6,10 +6,10 @@
 
 ## getting started
 
-In your `project.clj`: `[yokogiri "1.5.6"]`
+In your `project.clj`: `[yokogiri "1.5.7"]`
 ```clojure
   (ns myproject.core
-    (:require [yokogiri.core :as yokogiri]))
+    (:require [yokogiri.core :as $]))
 ```
 or
 ```clojure
