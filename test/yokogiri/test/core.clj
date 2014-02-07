@@ -37,3 +37,14 @@
     (fact "XPath works")
       (xpath p "//a")
       => truthy))
+
+(facts "About *client*"
+  (fact "You can dynamically rebind *client* to your own client."
+    (with-client (make-client :javascript false)
+      (:javascript (get-client-options *client*))) => false)
+  (fact "get-page works when using the default *client*."
+    (get-page "http://www.example.com/") => truthy)
+  (fact "as-page works when using the default *client*."
+    (as-page "docs/uberdoc.html") => truthy)
+  (fact "set-client-options! works when using the default *client*."
+    (set-client-options! {:javascript true}) => truthy))

@@ -1,4 +1,5 @@
 (ns yokogiri.core
+  (:require [clojure.java.io :as io])
   (:import [com.gargoylesoftware.htmlunit WebClient BrowserVersion WebClientOptions]
            [com.gargoylesoftware.htmlunit.html HtmlPage DomNode DomAttr]
            [org.w3c.dom NamedNodeMap Node]
@@ -26,6 +27,8 @@
    :tracking                        #(.setDoNotTrackEnabled                 ^WebClientOptions %1 %2)
    :javascript                      #(.setJavaScriptEnabled                 ^WebClientOptions %1 %2)})
 
+(declare ^:dynamic *client*)
+
 (defn set-client-options!
   "Sets options on the client.
 
@@ -50,12 +53,13 @@
     :javascript                       bool
     :homepage                         string
     :timeout                          integer"
-  [^WebClient client opts]
-  (let [^WebClientOptions client-opts (web-client-options client)]
-    (doseq [[k v] opts]
-      (let [setter-fn (get set-client-options-map k)]
-        (setter-fn client-opts v)))
-    client))
+  ([opts] (set-client-options! *client* opts))
+  ([^WebClient client opts]
+     (let [^WebClientOptions client-opts (web-client-options client)]
+       (doseq [[k v] opts]
+         (let [setter-fn (get set-client-options-map k)]
+           (setter-fn client-opts v)))
+       client)))
 
 (defn get-client-options
   "Returns a map of all options currently set on a client.
@@ -119,6 +123,21 @@
       (set-client-options! (new WebClient) opts)
       client)))
 
+(defonce ^:dynamic *client* (make-client))
+
+(defmacro with-client
+  "Takes a client which will be bound to *client*
+  within the scope of the form.
+
+  **Usage:**
+
+    user> (with-client (make-client :javascript false)
+            (get-page \"http://www.example.com/\"))
+    ;=> #<HtmlPage HtmlPage(http://www.example.com/)@1536532984>"
+  [c & body]
+  `(binding [*client* ~c]
+     ~@body))
+
 (defn get-page
   "Takes a client and a url, returns an HtmlPage.
 
@@ -126,8 +145,20 @@
 
     user> (get-page (make-client) \"http://www.example.com/\")
     ;=> #<HtmlPage HtmlPage(http://www.example.com/)@478170219>"
-  [^WebClient client, ^String url]
-  (.getPage ^WebClient client url))
+  ([url] (get-page *client* url))
+  ([^WebClient client, ^String url]
+     (.getPage ^WebClient client url)))
+
+(defn as-page
+  "Takes a path as a string and creates a Page you can access with
+  #'yokogiri.core/xpath, #'yokogiri.core/css, etc.
+
+  **Usage:**
+
+    user> (as-page \"http://www.example.com/\")
+    ;=> #<HtmlPage HtmlPage(file:/home/user/yokogiri/docs/uberdoc.html)@171016649>"
+  ([path] (as-page *client* path))
+  ([client path] (->> path io/file io/as-url str (get-page client))))
 
 (defn xpath
   "Takes an HtmlPage and an xpath string. Returns a vector of nodes
