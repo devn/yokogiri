@@ -75,7 +75,7 @@
      :applet                               (. opts isAppletEnabled)
      :block-popups                         (. opts isPopupBlockerEnabled)
      :css                                  (. opts isCssEnabled)
-     :gelocation                           (. opts isGeolocationEnabled)
+     :geolocation                          (. opts isGeolocationEnabled)
      :homepage                             (. opts getHomePage)
      :insecure-ssl                         (. opts isUseInsecureSSL)
      :javascript                           (. opts isJavaScriptEnabled)
