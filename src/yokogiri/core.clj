@@ -1,7 +1,7 @@
 (ns yokogiri.core
   (:require [clojure.java.io :as io])
-  (:import [com.gargoylesoftware.htmlunit WebClient BrowserVersion WebClientOptions]
-           [com.gargoylesoftware.htmlunit.html HtmlPage DomNode DomAttr]
+  (:import [com.gargoylesoftware.htmlunit StringWebResponse WebClient BrowserVersion WebClientOptions]
+           [com.gargoylesoftware.htmlunit.html HtmlPage DomNode DomAttr HTMLParser]
            [org.w3c.dom NamedNodeMap Node]
            [se.fishtank.css.selectors.dom DOMNodeSelector]))
 
@@ -137,6 +137,19 @@
   [c & body]
   `(binding [*client* ~c]
      ~@body))
+
+(defn create-page
+  "Takes a string, returns an HtmlPage.
+
+  **Usage:**
+
+    user> (create-page \"<html><body><a href=\\\"http://example.com\\\">Link</a></body></html>\")
+    ;=> #<HtmlPage HtmlPage(http://fakeurl.com/)@478170219>"
+    [xml]
+
+  (let [url (java.net.URL. "http://fakeurl.com")
+        response (StringWebResponse. xml url)]
+    (HTMLParser/parseHtml response (.getCurrentWindow (WebClient.)))))
 
 (defn get-page
   "Takes a client and a url, returns an HtmlPage.

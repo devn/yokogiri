@@ -38,6 +38,15 @@
       (xpath p "//a")
       => truthy))
 
+(facts "About creating page from string"
+  (let [p (create-page "<html><body><a href=\"http://example.com\">Link</a></body></html>")]
+    (fact "CSS works"
+      (css p "a")
+      => truthy)
+    (fact "XPath works"
+      (xpath p "//a")
+      => truthy)))
+
 (facts "About *client*"
   (fact "You can dynamically rebind *client* to your own client."
     (with-client (make-client :javascript false)
@@ -48,3 +57,5 @@
     (as-page "docs/uberdoc.html") => truthy)
   (fact "set-client-options! works when using the default *client*."
     (set-client-options! {:javascript true}) => truthy))
+
+
