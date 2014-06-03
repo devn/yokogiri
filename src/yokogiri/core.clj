@@ -144,10 +144,10 @@
   **Usage:**
 
     user> (create-page \"<html><body><a href=\\\"http://example.com\\\">Link</a></body></html>\")
-    ;=> #<HtmlPage HtmlPage(http://fakeurl.com/)@478170219>"
+    ;=> #<HtmlPage HtmlPage(file://fakeurl.com/)@478170219>"
     [xml]
 
-  (let [url (java.net.URL. "http://fakeurl.com")
+  (let [url (java.net.URL. "file://fakeurl.com")
         response (StringWebResponse. xml url)]
     (HTMLParser/parseHtml response (.getCurrentWindow (WebClient.)))))
 
