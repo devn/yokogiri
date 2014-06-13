@@ -1,3 +1,5 @@
+* <2014-06-13 Fri> -- Version 1.5.8
+** Create page from a string with #'yokogiri.core/create-page
 * <2013-12-25 Wed> -- Version 1.5.5
 ** Fixed a bug with make-client options not being set
 ** Added more usage to docstrings

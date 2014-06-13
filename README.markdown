@@ -6,7 +6,7 @@
 
 ## getting started
 
-In your `project.clj`: `[yokogiri "1.5.7"]`
+In your `project.clj`: `[yokogiri "1.5.8"]`
 ```clojure
   (ns myproject.core
     (:require [yokogiri.core :as $]))
@@ -60,6 +60,10 @@ or
 
   ;; Treat a local HTML file as a page:
   (xpath (as-page "docs/uberdoc.html") "//a")
+
+  ;; Treat an HTML string as a page:
+  (let [html-string "<html><body><a href=\"/foo\">bar</a></body></html>"]
+    (xpath (create-page html-string) "//a"))
 ```
 
 ## documentation

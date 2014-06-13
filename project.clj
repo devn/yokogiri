@@ -1,4 +1,4 @@
-(defproject yokogiri "1.5.7"
+(defproject yokogiri "1.5.8"
   :description "Barebones Nokogiri for Clojure"
   :license {:name "Eclipse Public License - Version 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"
