@@ -11,19 +11,15 @@ In your `project.clj`: `[yokogiri "1.5.8"]`
   (ns myproject.core
     (:require [yokogiri.core :as $]))
 ```
-or
-```clojure
-  (ns myproject.core
-    (:use [yokogiri.core]))
-```
 
 ## usage
 ```clojure
-  (def client (make-client))
+  (let [client (make-client)])
 
   ;; with javascript enabled (look at the docstring for make-client
   ;; for all of the available options.):
-  (def client (make-client :javascript false))
+  (let [client (make-client :javascript false)]
+    )
 
   ;; Curious what options are set by default?
   (get-client-options (make-client))
@@ -31,7 +27,8 @@ or
 
   ;; XPATH
   ;; First, we get the page.
-  (def page (get-page client "http://example.com"))
+  (let [page (get-page client "http://example.com")]
+    )
 
   (xpath page "//a")
   ;=> [#<HtmlAnchor HtmlAnchor[<a href="http://www.iana.org/domains/example">]>]
@@ -43,13 +40,13 @@ or
   ;=> ("More information...")
 
   ;; CSS
-  (def footer-feedback-text
-    (map node-text (css page "div.footer-beta-feedback")))
+  (let [footer-feedback-text (map node-text (css page "div.footer-beta-feedback"))]
+    )
 
   ;; Get specific attributes
-  (def a-attr-href
-    (map #(select-keys (attrs %) [:href])
-      (-> page (css "div.link a"))))
+  (let [a-attr-href (map #(select-keys (attrs %) [:href])
+                         (-> page (css "div.link a")))]
+    )
 
   ;; Not necessary to pass around client:
   (get-page "http://example.com/")
