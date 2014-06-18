@@ -145,8 +145,7 @@
 
     user> (create-page \"<html><body><a href=\\\"http://example.com\\\">Link</a></body></html>\")
     ;=> #<HtmlPage HtmlPage(file://fake-response-url)@478170219>"
-    [xml]
-
+  [xml]
   (let [url (io/as-url "file://fake-response-url")
         response (StringWebResponse. xml url)]
     (HTMLParser/parseHtml response (.getCurrentWindow (WebClient.)))))
