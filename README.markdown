@@ -65,7 +65,7 @@ In your `project.clj`: `[yokogiri "1.5.8"]`
 
   ;; Treat an HTML string as a page:
   (let [html-string "<html><body><a href=\"/foo\">bar</a></body></html>"]
-    (xpath (create-page html-string) "//a"))
+    (y/xpath (y/create-page html-string) "//a"))
 ```
 
 ## documentation
