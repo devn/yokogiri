@@ -11,55 +11,57 @@ In your `project.clj`: `[yokogiri "1.5.8"]`
   (ns myproject.core
     (:require [yokogiri.core :as $]))
 ```
-or
-```clojure
-  (ns myproject.core
-    (:use [yokogiri.core]))
-```
 
 ## usage
 ```clojure
-  (def client (make-client))
+  ;; Require yokogiri
+  (ns myproject.core
+    (:require [yokogiri.core :as y]))
+
+  ;; Make a client
+  (y/make-client)
 
   ;; with javascript enabled (look at the docstring for make-client
   ;; for all of the available options.):
-  (def client (make-client :javascript false))
+  (let [a-client (y/make-client :javascript false)]
+    (y/get-client-options a-client))
 
   ;; Curious what options are set by default?
-  (get-client-options (make-client))
+  (y/get-client-options (y/make-client))
   ;=> {:redirects true, :javascript true, ...}
 
-  ;; XPATH
-  ;; First, we get the page.
-  (def page (get-page client "http://example.com"))
+  ;; XPATH && CSS Scraping
+  ;; First, we make a client, and get a page.
+  (let [client (y/make-client)
+        page (y/get-page client "http://example.com")]
 
-  (xpath page "//a")
-  ;=> [#<HtmlAnchor HtmlAnchor[<a href="http://www.iana.org/domains/example">]>]
+    ;; XPATH
+    (y/xpath page "//a")
+    ;=> [#<HtmlAnchor HtmlAnchor[<a href="http://www.iana.org/domains/example">]>]
 
-  (map attrs (xpath page "//a"))
-  ;=> ({:text "More information...", :href "http://www.iana.org/domains/example"})
+    (map y/attrs (y/xpath page "//a"))
+    ;=> ({:text "More information...", :href "http://www.iana.org/domains/example"})
 
-  (map node-text (xpath page "//a"))
-  ;=> ("More information...")
+    (map y/node-text (y/xpath page "//a"))
+    ;=> ("More information...")
 
-  ;; CSS
-  (def footer-feedback-text
-    (map node-text (css page "div.footer-beta-feedback")))
+    ;; CSS
+    (map y/node-text (y/css page "div.footer-beta-feedback"))
 
-  ;; Get specific attributes
-  (def a-attr-href
-    (map #(select-keys (attrs %) [:href])
-      (-> page (css "div.link a"))))
+    ;; Get specific attributes
+    (map #(select-keys (y/attrs %) [:href])
+         (y/css page "div.link a")))
 
-  ;; Not necessary to pass around client:
-  (get-page "http://example.com/")
+  ;; Other Usage Notes:
+  ;; We don't *have to* create a client in order to get a page and do stuff with it:
+  (y/get-page "http://example.com/")
 
-  ;; Rebind *client*
-  (with-client (make-client :javascript false)
-    (get-page "http://www.example.com/"))
+  ;; Dynamically rebind *client* to get a new, temporary client within a scope:
+  (y/with-client (y/make-client :javascript false)
+    (y/get-page "http://www.example.com/"))
 
   ;; Treat a local HTML file as a page:
-  (xpath (as-page "docs/uberdoc.html") "//a")
+  (y/xpath (y/as-page "docs/uberdoc.html") "//a")
 
   ;; Treat an HTML string as a page:
   (let [html-string "<html><body><a href=\"/foo\">bar</a></body></html>"]
