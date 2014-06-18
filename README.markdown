@@ -1,5 +1,7 @@
 # yokogiri
 
+A thin Clojure wrapper around HTMLUnit with support for xpath and css selectors.
+
 ## status
 
 [![Build Status](https://travis-ci.org/devn/yokogiri.png)](https://travis-ci.org/devn/yokogiri)
