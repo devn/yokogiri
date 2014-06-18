@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/devn/yokogiri.png)](https://travis-ci.org/devn/yokogiri)
 
+[![Clojars Project](http://clojars.org/yokogiri/latest-version.svg)](http://clojars.org/yokogiri)
+
 ## getting started
 
 In your `project.clj`: `[yokogiri "1.5.8"]`
