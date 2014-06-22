@@ -25,7 +25,7 @@ In your `project.clj`: `[yokogiri "1.5.8"]`
   ;; Make a client
   (y/make-client)
 
-  ;; with javascript enabled (look at the docstring for make-client
+  ;; with javascript disabled (look at the docstring for make-client
   ;; for all of the available options.):
   (let [a-client (y/make-client :javascript false)]
     (y/get-client-options a-client))
